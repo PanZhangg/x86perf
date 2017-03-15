@@ -23,8 +23,9 @@ qsort_cmp(const void *a, const void *b)
     return 1;
 }
 
-int main() {
-
+int
+main(void)
+{
     uint32_t array[ARRAY_LEN];
 
     uint32_t i = 0;
