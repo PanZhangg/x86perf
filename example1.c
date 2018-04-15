@@ -14,11 +14,18 @@ trace_cpu_time_now(void)
 #define YSIZE 480
 #define IMGSIZE XSIZE * YSIZE
 
+#ifdef ALIGN_DATA_TO_64_BYTE
+#define ALIGNED_DATA __attribute__ ((aligned(8)))
+#else
+#define ALIGNED_DATA
+#endif
+
+
 struct RGB {
     unsigned char R;
     unsigned char G;
     unsigned char B;
-};
+} ALIGNED_DATA;
 
 struct RGB input_IMG[IMGSIZE];
 unsigned char output_IMG[IMGSIZE];
@@ -27,7 +34,7 @@ struct optimize_RGB {
     unsigned char R[IMGSIZE];
     unsigned char G[IMGSIZE];
     unsigned char B[IMGSIZE];
-};
+} ALIGNED_DATA;
 
 struct optimize_RGB opt_input_IMG;
 
@@ -163,6 +170,12 @@ void convert_RGB_2_black_and_white(struct optimize_RGB *img_input, unsigned char
 }
 #endif
 
+
+#ifdef SIMD_METHOD
+void convert_RGB_2_black_and_white(struct RGB *img_input, unsigned char *img_output) {
+}
+#endif
+
 int
 main(void)
 {
@@ -171,7 +184,7 @@ main(void)
     asm volatile("" ::: "memory");
 
     uint64_t start = trace_cpu_time_now();
-    for (; ite_count < 10000; ite_count++) {
+    for (; ite_count < 1000; ite_count++) {
 #ifdef OPTIMIZED_STRUCT_METHOD
         convert_RGB_2_black_and_white(&opt_input_IMG, output_IMG);
 #else
