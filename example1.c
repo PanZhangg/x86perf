@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdint.h>
+#include <xmmintrin.h>
 
 uint64_t
 trace_cpu_time_now(void)
@@ -14,12 +15,11 @@ trace_cpu_time_now(void)
 #define YSIZE 480
 #define IMGSIZE XSIZE * YSIZE
 
-#ifdef ALIGN_DATA_TO_64_BYTE
-#define ALIGNED_DATA __attribute__ ((aligned(8)))
+#ifdef ALIGN_DATA_TO_16_BYTE
+#define ALIGNED_DATA __attribute__ ((aligned(16)))
 #else
 #define ALIGNED_DATA
 #endif
-
 
 struct RGB {
     unsigned char R;
@@ -37,6 +37,18 @@ struct optimize_RGB {
 } ALIGNED_DATA;
 
 struct optimize_RGB opt_input_IMG;
+
+typedef int v4si __attribute__ ((vector_size(16)));
+
+struct simd_RGB {
+    v4si R[IMGSIZE / 4];
+    v4si G[IMGSIZE / 4];
+    v4si B[IMGSIZE / 4];
+} ALIGNED_DATA;
+
+struct simd_RGB simd_input_IMG;
+
+v4si simd_output_IMG[IMGSIZE / 4];
 
 #ifdef ORIGINAL_METHOD
 void convert_RGB_2_black_and_white(struct RGB *img_input, unsigned char *img_output) {
@@ -170,9 +182,40 @@ void convert_RGB_2_black_and_white(struct optimize_RGB *img_input, unsigned char
 }
 #endif
 
-
 #ifdef SIMD_METHOD
-void convert_RGB_2_black_and_white(struct RGB *img_input, unsigned char *img_output) {
+void convert_RGB_2_black_and_white(struct simd_RGB *img_input, v4si *img_output) {
+    int i = 0;
+    v4si or1, og1, ob1, op1;
+    v4si or2, og2, ob2, op2;
+    v4si or3, og3, ob3, op3;
+    v4si or4, og4, ob4, op4;
+
+    for (; i < (IMGSIZE / 4); i += 4) {
+        or1 = 1224 * img_input->R[i];
+        or2 = 1224 * img_input->R[i + 1];
+        or3 = 1224 * img_input->R[i + 2];
+        or4 = 1224 * img_input->R[i + 3];
+
+        og1 = 2404 * img_input->G[i];
+        og2 = 2404 * img_input->G[i + 1];
+        og3 = 2404 * img_input->G[i + 2];
+        og4 = 2404 * img_input->G[i + 3];
+
+        ob1 = 467 * img_input->B[i];
+        ob2 = 467 * img_input->B[i + 1];
+        ob3 = 467 * img_input->B[i + 2];
+        ob4 = 467 * img_input->B[i + 3];
+
+        op1 = or1 + og1 + ob1;
+        op2 = or2 + og2 + ob2;
+        op3 = or3 + og3 + ob3;
+        op4 = or4 + og4 + ob4;
+
+        img_output[i] = (op1 >> 12);
+        img_output[i + 1] = (op2 >> 12);
+        img_output[i + 2] = (op3 >> 12);
+        img_output[i + 3] = (op4 >> 12);
+    }
 }
 #endif
 
@@ -184,9 +227,11 @@ main(void)
     asm volatile("" ::: "memory");
 
     uint64_t start = trace_cpu_time_now();
-    for (; ite_count < 1000; ite_count++) {
+    for (; ite_count < 100; ite_count++) {
 #ifdef OPTIMIZED_STRUCT_METHOD
         convert_RGB_2_black_and_white(&opt_input_IMG, output_IMG);
+#elif defined(SIMD_METHOD)
+        convert_RGB_2_black_and_white(&simd_input_IMG, simd_output_IMG);
 #else
         convert_RGB_2_black_and_white(input_IMG, output_IMG);
 #endif
