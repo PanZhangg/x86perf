@@ -121,19 +121,19 @@ void convert_RGB_2_black_and_white(struct optimize_RGB *img_input, unsigned char
     for(i = 0; i < IMGSIZE; i += 4) {
 
         R1 = 1224 * img_input->R[i];
-        R1 = 1224 * img_input->R[i + 1];
-        R1 = 1224 * img_input->R[i + 2];
-        R1 = 1224 * img_input->R[i + 3];
+        R2 = 1224 * img_input->R[i + 1];
+        R3 = 1224 * img_input->R[i + 2];
+        R4 = 1224 * img_input->R[i + 3];
 
         G1 = 2404 * img_input->G[i];
-        G1 = 2404 * img_input->G[i + 1];
-        G1 = 2404 * img_input->G[i + 2];
-        G1 = 2404 * img_input->G[i + 3];
+        G2 = 2404 * img_input->G[i + 1];
+        G3 = 2404 * img_input->G[i + 2];
+        G4 = 2404 * img_input->G[i + 3];
 
         B1 = 467 * img_input->B[i];
-        B1 = 467 * img_input->B[i + 1];
-        B1 = 467 * img_input->B[i + 2];
-        B1 = 467 * img_input->B[i + 3];
+        B2 = 467 * img_input->B[i + 1];
+        B3 = 467 * img_input->B[i + 2];
+        B4 = 467 * img_input->B[i + 3];
 
         op1 = R1 + G1 + B1;
         op2 = R2 + G2 + B2;
@@ -148,23 +148,23 @@ void convert_RGB_2_black_and_white(struct optimize_RGB *img_input, unsigned char
 #else
     for (i = 0; i < IMGSIZE; i += 4) {
         R1 = 1224 * img_input->R[i];
-        R1 = 1224 * img_input->R[i + 1];
-        R1 = 1224 * img_input->R[i + 2];
-        R1 = 1224 * img_input->R[i + 3];
+        R2 = 1224 * img_input->R[i + 1];
+        R3 = 1224 * img_input->R[i + 2];
+        R4 = 1224 * img_input->R[i + 3];
     }
 
     for (i = 0; i < IMGSIZE; i += 4) {
         G1 = 2404 * img_input->G[i];
-        G1 = 2404 * img_input->G[i + 1];
-        G1 = 2404 * img_input->G[i + 2];
-        G1 = 2404 * img_input->G[i + 3];
+        G2 = 2404 * img_input->G[i + 1];
+        G3 = 2404 * img_input->G[i + 2];
+        G4 = 2404 * img_input->G[i + 3];
     }
 
     for (i = 0; i < IMGSIZE; i += 4) {
         B1 = 467 * img_input->B[i];
-        B1 = 467 * img_input->B[i + 1];
-        B1 = 467 * img_input->B[i + 2];
-        B1 = 467 * img_input->B[i + 3];
+        B2 = 467 * img_input->B[i + 1];
+        B3 = 467 * img_input->B[i + 2];
+        B4 = 467 * img_input->B[i + 3];
     }
 
     for (i = 0; i < IMGSIZE; i += 4) {
