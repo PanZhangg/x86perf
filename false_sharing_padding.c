@@ -48,11 +48,11 @@ inc_count(void *arg)
         printf("CPU affinity set failded: %d\n", cpu_id);
     }
     uint64_t i = 0;
-    uint64_t count = thread_arg->upper_limit;
+    uint64_t limit = thread_arg->upper_limit;
 
     uint64_t start = trace_cpu_time_now();
-    for(i = 0; i < count; i++) {
-        *(thread_arg->cnt)++;
+    for(i = 0; i < limit; i++) {
+        (*(thread_arg->cnt))++;
     }
     uint64_t end = trace_cpu_time_now();
 
