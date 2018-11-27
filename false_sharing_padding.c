@@ -65,9 +65,10 @@ int main() {
     #elif PADDING_128_BYTE
     printf("Padding 128 byte\n");
     #else
-    printf("No padding");
+    printf("No padding\n");
     #endif
     pthread_t tid[2];
+    //struct counter_t counter __attribute__((aligned(64)));
     struct counter_t counter;
     memset(&counter, 0, sizeof(counter));
     struct pthread_arg_t arg1 = {.cnt = &counter.c1,
@@ -77,6 +78,16 @@ int main() {
     struct pthread_arg_t arg2 = {.cnt = &counter.c2,
                          .cpu_id = 6,
                          .upper_limit = 1000000000};
+
+    int i;
+    int limit = 1000000000;
+    int count = 0;
+    uint64_t start = trace_cpu_time_now();
+    for(i = 0; i < limit; i++) {
+        count++;
+    }
+    uint64_t end = trace_cpu_time_now();
+    printf("Single Thread Time: %ld\n", end - start);
 
     pthread_create(&tid[0], NULL, (void *)inc_count, &arg1);
     pthread_create(&tid[1], NULL, (void *)inc_count, &arg2);
