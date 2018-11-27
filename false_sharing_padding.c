@@ -67,20 +67,24 @@ int main() {
     #else
     printf("No padding\n");
     #endif
+
+    uint64_t limit = 0;
+    printf("input count limit:\n");
+    scanf("%ld", &limit);
+
     pthread_t tid[2];
     //struct counter_t counter __attribute__((aligned(64)));
     struct counter_t counter;
     memset(&counter, 0, sizeof(counter));
     struct pthread_arg_t arg1 = {.cnt = &counter.c1,
                          .cpu_id = 5,
-                         .upper_limit = 1000000000};
+                         .upper_limit = limit};
 
     struct pthread_arg_t arg2 = {.cnt = &counter.c2,
                          .cpu_id = 6,
-                         .upper_limit = 1000000000};
+                         .upper_limit = limit};
 
     int i;
-    int limit = 1000000000;
     int count = 0;
     uint64_t start = trace_cpu_time_now();
     for(i = 0; i < limit; i++) {
@@ -91,9 +95,9 @@ int main() {
 
     pthread_create(&tid[0], NULL, (void *)inc_count, &arg1);
     pthread_create(&tid[1], NULL, (void *)inc_count, &arg2);
-
     pthread_join(tid[0], NULL);
     pthread_join(tid[1], NULL);
 
+    printf("arg cnt: %ld, %ld\n", *(arg1.cnt), *(arg2.cnt));
     return 0;
 }
