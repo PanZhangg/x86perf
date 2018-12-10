@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdint.h>
 
-#define ARRAY_LEN ( 1 << 16)
+#define ARRAY_LEN (1 << 24)
 
 static inline uint64_t
 trace_cpu_time_now(void)
@@ -33,14 +33,14 @@ anti_pointer_aliasing_f(uint32_t *__restrict a, uint32_t *__restrict b)
 int
 main(void)
 {
-    uint32_t arrayA[ARRAY_LEN];
-    uint32_t arrayB[ARRAY_LEN];
+    uint32_t *arrayA = (uint32_t *)malloc(ARRAY_LEN * sizeof(uint32_t));
+    uint32_t *arrayB = (uint32_t *)malloc(ARRAY_LEN * sizeof(uint32_t));
 
     asm volatile("" ::: "memory");
 
     uint64_t start = trace_cpu_time_now();
 
-    pointer_aliasing_f(&arrayA[0], &arrayB[0]);
+    pointer_aliasing_f(arrayA, arrayB);
 
     asm volatile("" ::: "memory");
 
@@ -52,7 +52,7 @@ main(void)
 
     start = trace_cpu_time_now();
 
-    anti_pointer_aliasing_f(&arrayA[0], &arrayB[0]);
+    anti_pointer_aliasing_f(arrayA, arrayB);
 
     asm volatile("" ::: "memory");
 
