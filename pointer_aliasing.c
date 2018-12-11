@@ -1,16 +1,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdint.h>
+#include "benchmark.h"
 
 #define ARRAY_LEN (1 << 24)
-
-static inline uint64_t
-trace_cpu_time_now(void)
-{
-    uint32_t a, d;
-    asm volatile ("rdtsc":"=a" (a), "=d" (d));
-    return (uint64_t)a + ((uint64_t)d << (uint64_t)32);
-}
 
 #ifdef PTR_ALIAS
 static void
@@ -49,20 +42,11 @@ main(void)
 #endif
 
 #ifdef ANTI_PTR_ALIAS
-    uint32_t v = 8;
+    uint32_t v = arrayA[8];
     uint32_t *p = &v;
 #endif
 
-    /*warm up*/
-    pointer_aliasing_f(arrayA, p);
-
-    uint64_t start = trace_cpu_time_now();
-
-    pointer_aliasing_f(arrayA, p);
-
-    uint64_t end = trace_cpu_time_now();
-
-    printf("arrayA[8] = %d, CPU cycles: %ld\n", arrayA[8], end - start);
+    BEST_TIME_NOCHECK(pointer_aliasing_f(arrayA, p), ,10,1,1);
 
     return 0;
 }
