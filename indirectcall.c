@@ -104,8 +104,11 @@ LIST
     int i = 0;
     for(; i < RAND_ARRAY_LEN; i++) {
         srand((unsigned)time(NULL));
+    #ifdef RANDOM_IDX
         rand_array[i] = rand() % OP_TYPE_NUM;
+    #else
         rand_array[i] = 1;
+    #endif
     }
 
 BEST_TIME_NOCHECK(call_ops(), ,1000000, 1, 1);
