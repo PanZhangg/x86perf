@@ -52,14 +52,11 @@ LIST
 
 #undef _
 
+#define _(op) op op##_fp;
 struct op {
-    open open_fp;
-    close close_fp;
-    write write_fp;
-    read read_fp;
-    add add_fp;
-    delete delete_fp;
+    OPS
 };
+#undef _
 
 struct op ops[OP_TYPE_NUM];
 
