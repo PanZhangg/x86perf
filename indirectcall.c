@@ -108,10 +108,11 @@ LIST
     #endif
     }
 
+#ifdef INDIRECT_CALL
 BEST_TIME_NOCHECK(call_ops(), ,1000000, 1, 1);
-
+#else
 BEST_TIME_NOCHECK(call_ops_directly(), ,1000000, 1, 1);
-
+#endif
 
     return 0;
 }
