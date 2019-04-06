@@ -14,7 +14,7 @@ EVENT9=' -e cpu/event=0xBC,umask=0x21,name=ITLB_LOAD_HIT/'
 EVENT10=' -e cpu/event=0xA2,umask=0x01,name=STALL_RESOURCE/'
 EVENT11=' -e cpu/event=0xA2,umask=0x04,name=STALL_RS/'
 PERF_STAT='perf stat'
-EVENTS=$EVENT10$EVENT11
+EVENTS=" -e cycles -e L1-icache-load-misses"$EVENT10$EVENT11
 PERF_CMD=$PERF_STAT$EVENTS
 
 echo "====RANDOM IDX -O0"

@@ -4,7 +4,7 @@
 #include "benchmark.h"
 
 #define OP_TYPE_NUM 5
-#define RAND_ARRAY_LEN 1024
+#define RAND_ARRAY_LEN 256
 
 #define FUNC_RETURN_TYPE void
 #define FUNC_PARAMETER void
