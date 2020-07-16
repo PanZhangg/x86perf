@@ -1,0 +1,3 @@
+[submodule "lockbench"]
+	path = lockbench
+	url = https://github.com/maropu/lockbench.git
